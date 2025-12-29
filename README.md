@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
+## Sip Timer
 
-## Project info
+A tiny, friendly timer for mindful breaks. Watch a drink or meal visual slowly reduce while you rest. Built with React, Vite, Tailwind, and shadcn UI.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+### Features
 
-## How can I edit this code?
+- Tea, Coffee, Water visuals (with realistic waves for water)
+- Meal plate and Red Bull can sections
+- Quick presets and URL start (example: `/tea?time=5`)
+- Pause/Resume by tapping/clicking the screen
+- Completion chime (works in background/minimized)
+- Optional push notifications (for alerts when the app is closed)
+- Dark mode toggle with system detection
 
-There are several ways of editing your application.
+### Quick start
 
-**Use Lovable**
+Prerequisites: Node.js 18+ and npm
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+```bash
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Open the printed local URL. Try these routes:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `/tea`, `/coffee`, `/water`
+- `/meal`
+- `/redbull`
 
-**Use GitHub Codespaces**
+You can auto-start a timer with minutes in the query string, e.g. `/water?time=10`.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Scripts
 
-## What technologies are used for this project?
+- `npm run dev` – start the dev server
+- `npm run build` – production build
+- `npm run preview` – preview the production build
 
-This project is built with:
+### Controls
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Select a preset to start
+- Tap/click the background to pause/resume
+- Use “Reset timer” to stop and clear
 
-## How can I deploy this project?
+### Dark mode
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+The site uses CSS variables for light/dark themes. Click the toggle on the home page to switch, or leave it on “System”.
 
-## Can I connect a custom domain to my Lovable project?
+### Background notifications (optional)
 
-Yes, you can!
+Browsers don’t allow web pages to play audio after they’re closed. To get alerts when the app is closed, enable push notifications:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1) Generate VAPID keys (once):
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```bash
+npx web-push generate-vapid-keys
+```
+
+2) Configure env vars in a `.env` file:
+
+```
+VITE_VAPID_PUBLIC_KEY=YOUR_PUBLIC_KEY
+VITE_PUSH_API_BASE=https://your-scheduler.example.com
+```
+
+3) Provide a simple server that schedules a Web Push to your subscription at the target time (endpoints: `POST /schedule`, `POST /cancel`). If you want, open an issue and we can share a minimal Express sample.
+
+Without a server, the in-page completion chime still works in foreground/minimized tabs.
+
+### Assets
+
+Place custom images in `src/assets/` and import them into components. Current assets include `indianMeal.jpg` and `redbull.png`.
+
+### Tech stack
+
+- React + TypeScript with Vite
+- Tailwind CSS + shadcn UI
+- next-themes for dark mode
+
+---
+
+Made just for fun and personal curiosity.
