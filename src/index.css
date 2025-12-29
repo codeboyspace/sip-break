@@ -38,11 +38,13 @@
 
     --radius: 1rem;
 
-    /* Beverage theme colors */
-    --tea-liquid: 45 70% 50%;
-    --tea-vessel: 25 20% 85%;
-    --tea-accent: 45 65% 45%;
-    --tea-bg: 45 30% 94%;
+    /* Beverage theme colors - Indian Chai */
+    --tea-liquid: 28 55% 55%;
+    --tea-foam: 35 45% 70%;
+    --tea-vessel: 200 5% 75%;
+    --tea-vessel-shine: 200 5% 90%;
+    --tea-accent: 28 50% 45%;
+    --tea-bg: 30 25% 92%;
 
     --coffee-liquid: 25 65% 25%;
     --coffee-vessel: 35 15% 80%;
@@ -94,10 +96,12 @@
     --input: 25 15% 20%;
     --ring: 30 70% 55%;
 
-    --tea-liquid: 45 65% 45%;
-    --tea-vessel: 25 15% 25%;
-    --tea-accent: 45 60% 50%;
-    --tea-bg: 30 20% 10%;
+    --tea-liquid: 28 50% 50%;
+    --tea-foam: 35 40% 60%;
+    --tea-vessel: 200 5% 50%;
+    --tea-vessel-shine: 200 5% 65%;
+    --tea-accent: 28 45% 55%;
+    --tea-bg: 25 15% 12%;
 
     --coffee-liquid: 25 55% 35%;
     --coffee-vessel: 30 12% 22%;

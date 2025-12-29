@@ -53,7 +53,9 @@ export default {
         },
         tea: {
           liquid: "hsl(var(--tea-liquid))",
+          foam: "hsl(var(--tea-foam))",
           vessel: "hsl(var(--tea-vessel))",
+          "vessel-shine": "hsl(var(--tea-vessel-shine))",
           accent: "hsl(var(--tea-accent))",
           bg: "hsl(var(--tea-bg))",
         },
