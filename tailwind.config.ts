@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ["var(--font-display)"],
+        body: ["var(--font-body)"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -47,15 +51,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        tea: {
+          liquid: "hsl(var(--tea-liquid))",
+          vessel: "hsl(var(--tea-vessel))",
+          accent: "hsl(var(--tea-accent))",
+          bg: "hsl(var(--tea-bg))",
+        },
+        coffee: {
+          liquid: "hsl(var(--coffee-liquid))",
+          vessel: "hsl(var(--coffee-vessel))",
+          accent: "hsl(var(--coffee-accent))",
+          bg: "hsl(var(--coffee-bg))",
+        },
+        water: {
+          liquid: "hsl(var(--water-liquid))",
+          vessel: "hsl(var(--water-vessel))",
+          accent: "hsl(var(--water-accent))",
+          bg: "hsl(var(--water-bg))",
         },
       },
       borderRadius: {
@@ -65,25 +77,24 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "liquid-wave": {
+          "0%, 100%": { transform: "translateX(0) translateY(0)" },
+          "25%": { transform: "translateX(-2px) translateY(1px)" },
+          "50%": { transform: "translateX(0) translateY(2px)" },
+          "75%": { transform: "translateX(2px) translateY(1px)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "liquid-wave": "liquid-wave 2s ease-in-out infinite",
       },
     },
   },
