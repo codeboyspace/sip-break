@@ -7,6 +7,7 @@ import DurationButtons from "@/components/DurationButtons";
 import CompletionMessage from "@/components/CompletionMessage";
 import { useTimer } from "@/hooks/useTimer";
 import { useCompletionSound } from "@/hooks/useCompletionSound";
+import { scheduleServerNotification } from "@/lib/push";
 
 interface BeverageTimerProps {
   type: "tea" | "coffee" | "water";
@@ -18,7 +19,7 @@ const BeverageTimer = ({ type }: BeverageTimerProps) => {
   const [searchParams] = useSearchParams();
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const { playCompletionSound } = useCompletionSound();
+  const { playCompletionSound, scheduleCompletionChime, cancelScheduledChimes } = useCompletionSound();
 
   const handleComplete = useCallback(() => {
     setIsComplete(true);
@@ -35,6 +36,15 @@ const BeverageTimer = ({ type }: BeverageTimerProps) => {
       if (!isNaN(duration) && duration > 0 && duration <= 60) {
         setSelectedDuration(duration);
         timer.start(duration);
+        cancelScheduledChimes();
+        scheduleCompletionChime(duration * 60 * 1000);
+        scheduleServerNotification({
+          id: `bev-${type}-${Date.now()}`,
+          fireAt: Date.now() + duration * 60 * 1000,
+          title: "Sip Timer",
+          body: `${type.charAt(0).toUpperCase() + type.slice(1)} timer complete`,
+          url: window.location.href,
+        });
       }
     }
   }, [searchParams]);
@@ -43,12 +53,22 @@ const BeverageTimer = ({ type }: BeverageTimerProps) => {
     setSelectedDuration(duration);
     setIsComplete(false);
     timer.start(duration);
+    cancelScheduledChimes();
+    scheduleCompletionChime(duration * 60 * 1000);
+    scheduleServerNotification({
+      id: `bev-${type}-${Date.now()}`,
+      fireAt: Date.now() + duration * 60 * 1000,
+      title: "Sip Timer",
+      body: `${type.charAt(0).toUpperCase() + type.slice(1)} timer complete`,
+      url: window.location.href,
+    });
   };
 
   const handleReset = () => {
     setIsComplete(false);
     setSelectedDuration(null);
     timer.reset();
+    cancelScheduledChimes();
   };
 
   const handleContainerClick = () => {
@@ -56,6 +76,21 @@ const BeverageTimer = ({ type }: BeverageTimerProps) => {
       timer.toggle();
     }
   };
+
+  // Reschedule chime on resume; cancel on pause
+  useEffect(() => {
+    if (!timer.isRunning) {
+      cancelScheduledChimes();
+      return;
+    }
+    if (timer.isPaused) {
+      cancelScheduledChimes();
+    } else {
+      cancelScheduledChimes();
+      scheduleCompletionChime(timer.timeRemaining);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timer.isPaused]);
 
   const bgClass = {
     tea: "bg-tea-bg",

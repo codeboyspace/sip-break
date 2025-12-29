@@ -71,6 +71,20 @@ export default {
           accent: "hsl(var(--water-accent))",
           bg: "hsl(var(--water-bg))",
         },
+        redbull: {
+          accent: "hsl(var(--redbull-accent))",
+          bg: "hsl(var(--redbull-bg))",
+          shadow: "hsl(var(--redbull-shadow))",
+        },
+        meal: {
+          plate: "hsl(var(--meal-plate))",
+          rim: "hsl(var(--meal-plate-rim))",
+          accent: "hsl(var(--meal-accent))",
+          food1: "hsl(var(--meal-food1))",
+          food2: "hsl(var(--meal-food2))",
+          food3: "hsl(var(--meal-food3))",
+          bg: "hsl(var(--meal-bg))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

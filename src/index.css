@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -56,6 +57,20 @@
     --water-accent: 200 60% 45%;
     --water-bg: 200 30% 95%;
 
+    /* Red Bull theme */
+    --redbull-bg: 220 50% 96%;
+    --redbull-accent: 220 80% 55%;
+    --redbull-shadow: 220 30% 40%;
+
+    /* Meal theme colors */
+    --meal-bg: 25 30% 96%;
+    --meal-plate: 210 20% 92%;
+    --meal-plate-rim: 210 15% 85%;
+    --meal-accent: 20 80% 45%;
+    --meal-food1: 40 70% 60%; /* grains */
+    --meal-food2: 140 45% 40%; /* greens */
+    --meal-food3: 5 65% 50%;  /* protein */
+
     /* Animation timing */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -112,6 +127,18 @@
     --water-vessel: 200 12% 25%;
     --water-accent: 200 55% 55%;
     --water-bg: 200 20% 10%;
+
+    --redbull-bg: 220 15% 12%;
+    --redbull-accent: 220 70% 60%;
+    --redbull-shadow: 220 20% 28%;
+
+    --meal-bg: 25 15% 12%;
+    --meal-plate: 210 8% 20%;
+    --meal-plate-rim: 210 10% 28%;
+    --meal-accent: 30 70% 55%;
+    --meal-food1: 40 65% 55%;
+    --meal-food2: 140 45% 35%;
+    --meal-food3: 5 60% 45%;
 
     --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
     --shadow-vessel: 0 8px 32px -8px hsl(0 0% 0% / 0.4);
@@ -185,6 +212,10 @@
     font-family: var(--font-body);
   }
 
+  .font-curvy {
+    font-family: 'Satisfy', cursive;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -225,4 +256,18 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Additional wave motion support for SVG elements when needed */
+@keyframes wave-shift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-28px);
+  }
+}
+
+.animate-wave-shift {
+  animation: wave-shift 4s linear infinite;
 }

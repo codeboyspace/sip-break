@@ -26,6 +26,7 @@ export const useTimer = (options: UseTimerOptions = {}): UseTimerReturn => {
   const startTimeRef = useRef<number>(0);
   const pausedTimeRef = useRef<number>(0);
   const animationFrameRef = useRef<number>(0);
+  const completionTimeoutRef = useRef<number | null>(null);
   const hasCompletedRef = useRef(false);
 
   const tick = useCallback(() => {
@@ -68,6 +69,19 @@ export const useTimer = (options: UseTimerOptions = {}): UseTimerReturn => {
     hasCompletedRef.current = false;
     setIsRunning(true);
     setIsPaused(false);
+
+    // Schedule completion independent of animation frames so it works in background/minimized
+    if (completionTimeoutRef.current) {
+      clearTimeout(completionTimeoutRef.current);
+    }
+    completionTimeoutRef.current = window.setTimeout(() => {
+      if (!hasCompletedRef.current) {
+        hasCompletedRef.current = true;
+        setIsRunning(false);
+        setTimeRemaining(0);
+        options.onComplete?.();
+      }
+    }, durationMs);
   }, []);
 
   const pause = useCallback(() => {
@@ -77,6 +91,10 @@ export const useTimer = (options: UseTimerOptions = {}): UseTimerReturn => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
+    if (completionTimeoutRef.current) {
+      clearTimeout(completionTimeoutRef.current);
+      completionTimeoutRef.current = null;
+    }
   }, [isRunning, isPaused]);
 
   const resume = useCallback(() => {
@@ -84,7 +102,42 @@ export const useTimer = (options: UseTimerOptions = {}): UseTimerReturn => {
     const pauseDuration = performance.now() - pausedTimeRef.current;
     startTimeRef.current += pauseDuration;
     setIsPaused(false);
+
+    // Recalculate remaining and reschedule completion
+    const now = performance.now();
+    const elapsed = now - startTimeRef.current;
+    const remaining = Math.max(0, totalDuration - elapsed);
+    if (completionTimeoutRef.current) {
+      clearTimeout(completionTimeoutRef.current);
+    }
+    completionTimeoutRef.current = window.setTimeout(() => {
+      if (!hasCompletedRef.current) {
+        hasCompletedRef.current = true;
+        setIsRunning(false);
+        setTimeRemaining(0);
+        options.onComplete?.();
+      }
+    }, remaining);
   }, [isRunning, isPaused]);
+
+  // When returning to the tab, refresh the displayed remaining time
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState !== "visible") return;
+      if (!isRunning) return;
+      const now = performance.now();
+      const elapsed = now - startTimeRef.current;
+      const remaining = Math.max(0, totalDuration - elapsed);
+      setTimeRemaining(remaining);
+      if (remaining <= 0 && !hasCompletedRef.current) {
+        hasCompletedRef.current = true;
+        setIsRunning(false);
+        options.onComplete?.();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [isRunning, totalDuration, options]);
 
   const reset = useCallback(() => {
     setIsRunning(false);
@@ -94,6 +147,10 @@ export const useTimer = (options: UseTimerOptions = {}): UseTimerReturn => {
     hasCompletedRef.current = false;
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (completionTimeoutRef.current) {
+      clearTimeout(completionTimeoutRef.current);
+      completionTimeoutRef.current = null;
     }
   }, []);
 

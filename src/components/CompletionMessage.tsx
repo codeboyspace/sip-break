@@ -1,7 +1,7 @@
-import { Coffee, Droplets, Leaf } from "lucide-react";
+import { Coffee, Droplets, Leaf, Utensils, Bolt } from "lucide-react";
 
 interface CompletionMessageProps {
-  type: "tea" | "coffee" | "water";
+  type: "tea" | "coffee" | "water" | "meal" | "redbull";
   onReset: () => void;
 }
 
@@ -21,6 +21,16 @@ const CompletionMessage = ({ type, onReset }: CompletionMessageProps) => {
       icon: Droplets,
       message: "Break complete",
       subtitle: "Stay hydrated",
+    },
+    meal: {
+      icon: Utensils,
+      message: "Meal timer done",
+      subtitle: "Hope that was delicious",
+    },
+    redbull: {
+      icon: Bolt,
+      message: "Energy break done",
+      subtitle: "Feel the boost",
     },
   };
 

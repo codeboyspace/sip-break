@@ -19,6 +19,11 @@ const BeverageVessel = ({ type, fillPercentage, size = 280 }: BeverageVesselProp
     return <CoffeeCup fillPercentage={clampedFill} size={size} />;
   }
 
+  // Render realistic water glass with animated waves
+  if (type === "water") {
+    return <WaterGlass fillPercentage={clampedFill} size={size} />;
+  }
+
   const vesselConfig = useMemo(() => {
     return {
       vesselClass: "fill-water-vessel",
@@ -522,3 +527,204 @@ const ChaiGlass = ({ fillPercentage, size }: { fillPercentage: number; size: num
 };
 
 export default BeverageVessel;
+
+// Realistic Water Glass with wavy animated surface
+function WaterGlass({ fillPercentage, size }: { fillPercentage: number; size: number }) {
+  // Glass dimensions
+  const glassTop = 50;
+  const glassHeight = 150;
+  const glassBottom = glassTop + glassHeight;
+  const innerLeft = 50;
+  const innerRight = 150;
+  const innerWidth = innerRight - innerLeft; // 100
+
+  // Liquid calculations
+  const maxLiquidHeight = glassHeight - 10;
+  const liquidHeight = (fillPercentage / 100) * maxLiquidHeight;
+  const liquidTop = glassBottom - liquidHeight;
+
+  // Build a smooth wave path using quadratic curves across the inner width
+  const buildWavePath = (
+    baseY: number,
+    amplitude: number,
+    wavelength: number,
+    phase: number
+  ) => {
+    const startX = innerLeft - wavelength + (phase % wavelength);
+    const endX = innerRight + wavelength;
+    let d = `M ${startX} ${baseY}`;
+    let toggle = 1;
+    for (let x = startX; x <= endX; x += wavelength / 2) {
+      const cpX = x + wavelength / 4;
+      const cpY = baseY + amplitude * toggle;
+      const nx = x + wavelength / 2;
+      const ny = baseY;
+      d += ` Q ${cpX} ${cpY}, ${nx} ${ny}`;
+      toggle *= -1; // alternate crest/trough
+    }
+    // Close the shape down to the bottom of the glass so it fills below the wave
+    d += ` L ${endX} ${glassBottom} L ${startX} ${glassBottom} Z`;
+    return d;
+  };
+
+  // Visual tuning
+  const waveAmp1 = 4;
+  const waveAmp2 = 7;
+  const wavelength = 28; // smaller = more waves
+
+  return (
+    <div className="vessel-container" style={{ width: size, height: size * 1.1 }}>
+      <svg viewBox="0 0 200 240" width={size} height={size * 1.1} className="overflow-visible">
+        <defs>
+          {/* Clip path for cylindrical glass with subtle taper */}
+          <clipPath id="water-glass-clip">
+            <path d={`
+              M ${innerLeft} ${glassTop}
+              Q ${innerLeft - 4} ${glassTop + glassHeight * 0.65} ${innerLeft + 6} ${glassBottom}
+              Q 100 ${glassBottom + 6} ${innerRight - 6} ${glassBottom}
+              Q ${innerRight + 4} ${glassTop + glassHeight * 0.65} ${innerRight} ${glassTop}
+              Z
+            `} />
+          </clipPath>
+
+          {/* Glass body gradient */}
+          <linearGradient id="water-glass-body" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(var(--water-vessel))" stopOpacity="0.55" />
+            <stop offset="20%" stopColor="#ffffff" stopOpacity="0.25" />
+            <stop offset="50%" stopColor="#f7faff" stopOpacity="0.18" />
+            <stop offset="80%" stopColor="#ffffff" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="hsl(var(--water-vessel))" stopOpacity="0.55" />
+          </linearGradient>
+
+          {/* Water gradient (lighter at surface) */}
+          <linearGradient id="water-liquid-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="hsl(var(--water-liquid))" stopOpacity="0.9" />
+            <stop offset="35%" stopColor="hsl(var(--water-liquid))" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="hsl(var(--water-accent))" stopOpacity="0.9" />
+          </linearGradient>
+
+          {/* Rim shading */}
+          <radialGradient id="rim-shade" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#c9d6e8" stopOpacity="0.2" />
+          </radialGradient>
+        </defs>
+
+        {/* Shadow */}
+        <ellipse cx="100" cy={glassBottom + 14} rx="46" ry="8" fill="#00000022" />
+
+        {/* Glass body */}
+        <path
+          d={`
+            M ${innerLeft} ${glassTop}
+            Q ${innerLeft - 4} ${glassTop + glassHeight * 0.65} ${innerLeft + 6} ${glassBottom}
+            Q 100 ${glassBottom + 6} ${innerRight - 6} ${glassBottom}
+            Q ${innerRight + 4} ${glassTop + glassHeight * 0.65} ${innerRight} ${glassTop}
+            Z
+          `}
+          fill="url(#water-glass-body)"
+        />
+
+        {/* Liquid with wavy surface inside clip */}
+        <g clipPath="url(#water-glass-clip)">
+          {fillPercentage > 0 && (
+            <>
+              {/* Base water fill as fallback to ensure full color */}
+              <rect
+                x={innerLeft}
+                y={liquidTop}
+                width={innerWidth}
+                height={glassBottom - liquidTop}
+                fill="url(#water-liquid-gradient)"
+              />
+
+              {/* Wave layer 1 */}
+              <path
+                d={buildWavePath(liquidTop, waveAmp2, wavelength, 0)}
+                fill="url(#water-liquid-gradient)"
+                opacity="0.9"
+                style={{ transformBox: "fill-box", transformOrigin: "center" }}
+              >
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  from="0 0"
+                  to="-28 0"
+                  dur="4s"
+                  repeatCount="indefinite"
+                />
+              </path>
+
+              {/* Wave layer 2 (parallax, opposite direction) */}
+              <path
+                d={buildWavePath(liquidTop + 1.5, waveAmp1, wavelength * 1.2, wavelength / 2)}
+                fill="url(#water-liquid-gradient)"
+                opacity="0.7"
+                style={{ transformBox: "fill-box", transformOrigin: "center" }}
+              >
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  from="0 0"
+                  to="28 0"
+                  dur="6s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </>
+          )}
+
+          {/* Caustic-like soft highlight on water surface */}
+          {fillPercentage > 2 && (
+            <ellipse
+              cx="100"
+              cy={liquidTop + 2}
+              rx={innerWidth / 2 - 4}
+              ry="6"
+              fill="#ffffff"
+              opacity="0.2"
+            />
+          )}
+        </g>
+
+        {/* Rim */}
+        <ellipse cx="100" cy={glassTop} rx={innerWidth / 2} ry="7" fill="url(#rim-shade)" />
+
+        {/* Inner rim */}
+        <ellipse cx="100" cy={glassTop} rx={innerWidth / 2 - 6} ry="4" fill="#ffffff" opacity="0.55" />
+
+        {/* Edge outline and subtle shine */}
+        <path
+          d={`
+            M ${innerLeft} ${glassTop}
+            Q ${innerLeft - 4} ${glassTop + glassHeight * 0.65} ${innerLeft + 6} ${glassBottom}
+            Q 100 ${glassBottom + 6} ${innerRight - 6} ${glassBottom}
+            Q ${innerRight + 4} ${glassTop + glassHeight * 0.65} ${innerRight} ${glassTop}
+          `}
+          fill="none"
+          stroke="hsl(var(--water-vessel))"
+          strokeWidth="2"
+          opacity="0.55"
+        />
+
+        {/* Left vertical shine */}
+        <path
+          d={`M ${innerLeft + 8} ${glassTop + 10} L ${innerLeft + 10} ${glassBottom - 14}`}
+          stroke="#ffffff"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          opacity="0.35"
+        />
+
+        {/* Right subtle shine */}
+        <path
+          d={`M ${innerRight - 10} ${glassTop + 14} L ${innerRight - 8} ${glassBottom - 18}`}
+          stroke="#ffffff"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.18"
+        />
+      </svg>
+    </div>
+  );
+}

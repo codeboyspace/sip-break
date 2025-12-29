@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f2c879"/>
+      <stop offset="100%" stop-color="#e1a84b"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#111418"/>
+  <!-- Cup -->
+  <path d="M18 22 h22 a2 2 0 0 1 2 2 v12 c0 6-5 11-12 11s-12-5-12-11V24a2 2 0 0 1 2-2z" fill="#2a2f36"/>
+  <!-- Handle -->
+  <path d="M44 26 c6 0 9 4 9 8s-3 8-9 8" fill="none" stroke="#3b414b" stroke-width="3" stroke-linecap="round"/>
+  <!-- Liquid with wave -->
+  <path d="M20 34 q6-3 12 0 t12 0 v4 c0 5-5 9-12 9s-12-4-12-9z" fill="url(#g)"/>
+  <!-- Steam -->
+  <path d="M28 18 c0-4 4-4 4-8" fill="none" stroke="#8a8f99" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+  <path d="M36 18 c0-4 4-4 4-8" fill="none" stroke="#8a8f99" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+</svg>
