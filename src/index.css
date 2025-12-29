@@ -204,6 +204,10 @@
 }
 
 @layer utilities {
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 800px 600px;
+  }
   .font-display {
     font-family: var(--font-display);
   }

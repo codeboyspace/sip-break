@@ -109,7 +109,7 @@ const RedBullTimer = () => {
 
   return (
     <div 
-      className={`min-h-screen bg-redbull-bg transition-colors duration-500 relative overflow-hidden`}
+      className={`min-h-screen bg-redbull-bg transition-colors duration-500 relative overflow-hidden cv-auto`}
       onClick={handleContainerClick}
     >
       {/* Back navigation */}

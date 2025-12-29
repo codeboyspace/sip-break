@@ -100,7 +100,7 @@ const BeverageTimer = ({ type }: BeverageTimerProps) => {
 
   return (
     <div 
-      className={`min-h-screen ${bgClass} transition-colors duration-500 relative overflow-hidden`}
+      className={`min-h-screen ${bgClass} transition-colors duration-500 relative overflow-hidden cv-auto`}
       onClick={handleContainerClick}
     >
       {/* Back navigation */}

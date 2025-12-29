@@ -48,6 +48,15 @@ const beverages = [
   },
 ];
 
+// Prefetch route chunks on hover or visibility
+const prefetchers: Record<string, () => Promise<unknown>> = {
+  tea: () => import("./BeverageTimer"),
+  coffee: () => import("./BeverageTimer"),
+  water: () => import("./BeverageTimer"),
+  meal: () => import("./MealTimer"),
+  redbull: () => import("./RedBullTimer"),
+};
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 py-12 relative">
@@ -104,6 +113,8 @@ const Index = () => {
               key={beverage.id}
               to={`/${beverage.id}`}
               className={`beverage-card ${beverage.bgClass} flex flex-col items-center text-center group`}
+              onMouseEnter={() => prefetchers[beverage.id]?.()}
+              onTouchStart={() => prefetchers[beverage.id]?.()}
             >
               <div className="mb-4 p-4 rounded-full bg-background/60 group-hover:bg-background transition-colors">
                 <Icon className={`w-10 h-10 ${beverage.iconClass}`} strokeWidth={1.5} />

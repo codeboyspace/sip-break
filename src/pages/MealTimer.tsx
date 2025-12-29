@@ -109,7 +109,7 @@ const MealTimer = () => {
 
   return (
     <div 
-      className={`min-h-screen bg-meal-bg transition-colors duration-500 relative overflow-hidden`}
+      className={`min-h-screen bg-meal-bg transition-colors duration-500 relative overflow-hidden cv-auto`}
       onClick={handleContainerClick}
     >
       {/* Loader overlay while the meal image is preloading */}
