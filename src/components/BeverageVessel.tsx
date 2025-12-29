@@ -14,28 +14,18 @@ const BeverageVessel = ({ type, fillPercentage, size = 280 }: BeverageVesselProp
     return <ChaiGlass fillPercentage={clampedFill} size={size} />;
   }
 
+  // Render coffee cup with saucer
+  if (type === "coffee") {
+    return <CoffeeCup fillPercentage={clampedFill} size={size} />;
+  }
+
   const vesselConfig = useMemo(() => {
-    switch (type) {
-      case "coffee":
-        return {
-          vesselClass: "fill-coffee-vessel",
-          liquidClass: "fill-coffee-liquid",
-          handleColor: "stroke-coffee-vessel",
-        };
-      case "water":
-        return {
-          vesselClass: "fill-water-vessel",
-          liquidClass: "fill-water-liquid",
-          handleColor: "stroke-water-vessel",
-        };
-      default:
-        return {
-          vesselClass: "fill-coffee-vessel",
-          liquidClass: "fill-coffee-liquid",
-          handleColor: "stroke-coffee-vessel",
-        };
-    }
-  }, [type]);
+    return {
+      vesselClass: "fill-water-vessel",
+      liquidClass: "fill-water-liquid",
+      handleColor: "stroke-water-vessel",
+    };
+  }, []);
 
   const vesselHeight = 160;
   const vesselTop = 60;
@@ -115,6 +105,206 @@ const BeverageVessel = ({ type, fillPercentage, size = 280 }: BeverageVesselProp
           strokeLinecap="round"
           opacity="0.15"
         />
+      </svg>
+    </div>
+  );
+};
+
+// Coffee Cup with Saucer Component - matching reference image
+const CoffeeCup = ({ fillPercentage, size }: { fillPercentage: number; size: number }) => {
+  const cupHeight = 70;
+  const cupTopWidth = 100;
+  const cupBottomWidth = 60;
+  const cupTop = 60;
+
+  // Calculate liquid position
+  const maxLiquidHeight = cupHeight - 10;
+  const liquidHeight = (fillPercentage / 100) * maxLiquidHeight;
+  const liquidTop = cupTop + cupHeight - liquidHeight - 5;
+
+  return (
+    <div className="vessel-container" style={{ width: size, height: size * 0.9 }}>
+      <svg
+        viewBox="0 0 180 150"
+        width={size}
+        height={size * 0.85}
+        className="overflow-visible"
+      >
+        <defs>
+          {/* Clip path for the cup */}
+          <clipPath id="coffee-cup-clip">
+            <path d={`
+              M${(180 - cupTopWidth) / 2} ${cupTop}
+              Q${(180 - cupTopWidth) / 2 - 5} ${cupTop + cupHeight * 0.7} ${(180 - cupBottomWidth) / 2} ${cupTop + cupHeight}
+              Q${(180 - cupBottomWidth) / 2 - 3} ${cupTop + cupHeight + 5} 90 ${cupTop + cupHeight + 5}
+              Q${(180 + cupBottomWidth) / 2 + 3} ${cupTop + cupHeight + 5} ${(180 + cupBottomWidth) / 2} ${cupTop + cupHeight}
+              Q${(180 + cupTopWidth) / 2 + 5} ${cupTop + cupHeight * 0.7} ${(180 + cupTopWidth) / 2} ${cupTop}
+              Z
+            `} />
+          </clipPath>
+
+          {/* Cup body gradient - warm tan/beige */}
+          <linearGradient id="coffee-cup-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#b8a07d" />
+            <stop offset="20%" stopColor="#c9b08a" />
+            <stop offset="50%" stopColor="#d4bc94" />
+            <stop offset="80%" stopColor="#c9b08a" />
+            <stop offset="100%" stopColor="#b8a07d" />
+          </linearGradient>
+
+          {/* Coffee liquid gradient - dark brown */}
+          <linearGradient id="coffee-liquid-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#8b6b4a" />
+            <stop offset="50%" stopColor="#6d5339" />
+            <stop offset="100%" stopColor="#5a432f" />
+          </linearGradient>
+
+          {/* Saucer gradient */}
+          <linearGradient id="saucer-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#a08b6a" />
+            <stop offset="30%" stopColor="#c4ad8a" />
+            <stop offset="50%" stopColor="#d4bc94" />
+            <stop offset="70%" stopColor="#c4ad8a" />
+            <stop offset="100%" stopColor="#a08b6a" />
+          </linearGradient>
+        </defs>
+
+        {/* Saucer - ellipse under the cup */}
+        <ellipse
+          cx="90"
+          cy={cupTop + cupHeight + 12}
+          rx="70"
+          ry="14"
+          fill="url(#saucer-gradient)"
+        />
+        
+        {/* Saucer top highlight */}
+        <ellipse
+          cx="90"
+          cy={cupTop + cupHeight + 8}
+          rx="55"
+          ry="8"
+          fill="#c9b894"
+          opacity="0.6"
+        />
+
+        {/* Cup body */}
+        <path
+          d={`
+            M${(180 - cupTopWidth) / 2} ${cupTop}
+            Q${(180 - cupTopWidth) / 2 - 5} ${cupTop + cupHeight * 0.7} ${(180 - cupBottomWidth) / 2} ${cupTop + cupHeight}
+            Q${(180 - cupBottomWidth) / 2 - 3} ${cupTop + cupHeight + 5} 90 ${cupTop + cupHeight + 5}
+            Q${(180 + cupBottomWidth) / 2 + 3} ${cupTop + cupHeight + 5} ${(180 + cupBottomWidth) / 2} ${cupTop + cupHeight}
+            Q${(180 + cupTopWidth) / 2 + 5} ${cupTop + cupHeight * 0.7} ${(180 + cupTopWidth) / 2} ${cupTop}
+            Z
+          `}
+          fill="url(#coffee-cup-gradient)"
+        />
+
+        {/* Liquid inside the cup */}
+        <g clipPath="url(#coffee-cup-clip)">
+          {fillPercentage > 0 && (
+            <rect
+              x="35"
+              y={liquidTop}
+              width="110"
+              height={liquidHeight + 15}
+              fill="url(#coffee-liquid-gradient)"
+              className="liquid-fill"
+            />
+          )}
+
+          {/* Coffee surface highlight */}
+          {fillPercentage > 5 && (
+            <ellipse
+              cx="90"
+              cy={liquidTop + 3}
+              rx="42"
+              ry="6"
+              fill="#7a5c42"
+              opacity="0.8"
+            />
+          )}
+        </g>
+
+        {/* Cup rim - curved top edge */}
+        <ellipse
+          cx="90"
+          cy={cupTop}
+          rx={cupTopWidth / 2}
+          ry="8"
+          fill="#d8c49c"
+        />
+        
+        {/* Inner rim */}
+        <ellipse
+          cx="90"
+          cy={cupTop}
+          rx={cupTopWidth / 2 - 5}
+          ry="5"
+          fill="#c4ad88"
+          opacity="0.7"
+        />
+
+        {/* Handle - curved loop on the right */}
+        <path
+          d={`
+            M${(180 + cupTopWidth) / 2 - 5} ${cupTop + 15}
+            Q${(180 + cupTopWidth) / 2 + 25} ${cupTop + 15}
+            ${(180 + cupTopWidth) / 2 + 28} ${cupTop + cupHeight * 0.5}
+            Q${(180 + cupTopWidth) / 2 + 25} ${cupTop + cupHeight - 5}
+            ${(180 + cupBottomWidth) / 2 + 15} ${cupTop + cupHeight - 5}
+          `}
+          fill="none"
+          stroke="#c4ad88"
+          strokeWidth="10"
+          strokeLinecap="round"
+        />
+
+        {/* Handle inner curve */}
+        <path
+          d={`
+            M${(180 + cupTopWidth) / 2} ${cupTop + 20}
+            Q${(180 + cupTopWidth) / 2 + 15} ${cupTop + 20}
+            ${(180 + cupTopWidth) / 2 + 18} ${cupTop + cupHeight * 0.5}
+            Q${(180 + cupTopWidth) / 2 + 15} ${cupTop + cupHeight - 10}
+            ${(180 + cupBottomWidth) / 2 + 18} ${cupTop + cupHeight - 10}
+          `}
+          fill="none"
+          stroke="#a08b6a"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+
+        {/* Left side shine on cup */}
+        <path
+          d={`M${(180 - cupTopWidth) / 2 + 12} ${cupTop + 10} Q${(180 - cupBottomWidth) / 2 + 5} ${cupTop + cupHeight * 0.6} ${(180 - cupBottomWidth) / 2 + 10} ${cupTop + cupHeight - 5}`}
+          stroke="#e8dcc4"
+          strokeWidth="4"
+          strokeLinecap="round"
+          opacity="0.5"
+        />
+
+        {/* Steam - wavy lines rising from the cup */}
+        {fillPercentage > 30 && (
+          <g className="animate-float" opacity="0.5">
+            <path
+              d="M80 45 Q85 35 80 25 Q75 15 80 5"
+              stroke="#d0d0d0"
+              strokeWidth="2.5"
+              fill="none"
+              strokeLinecap="round"
+            />
+            <path
+              d="M100 48 Q105 38 100 28 Q95 18 100 8"
+              stroke="#d0d0d0"
+              strokeWidth="2.5"
+              fill="none"
+              strokeLinecap="round"
+              opacity="0.7"
+            />
+          </g>
+        )}
       </svg>
     </div>
   );
